@@ -1,0 +1,5 @@
+{
+  "name": "VoltFree - Smart Voltage Divider",
+  "description": "A clean, modern voltage divider calculator that uses standard E24 series resistors and AI-powered circuit explanations for hobbyists and engineers.",
+  "requestFramePermissions": []
+}
