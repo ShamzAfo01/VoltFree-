@@ -16,10 +16,10 @@ const STEPS: Step[] = ['vin', 'vout', 'result', 'explanation'];
  */
 const Digit = ({ value }: { value: string }) => {
   const number = parseInt(value, 10);
-  const y = useSpring(number * -100, { stiffness: 100, damping: 20 });
+  const y = useSpring(number * -10, { stiffness: 100, damping: 20 });
 
   useEffect(() => {
-    y.set(number * -100);
+    y.set(number * -10);
   }, [number, y]);
 
   return (
