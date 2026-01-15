@@ -274,8 +274,15 @@ const App: React.FC = () => {
                     {result.bestPair.actualVOut.toFixed(2)}<span className="text-2xl opacity-40">V</span>
                   </div>
                   <p className="text-[11px] font-bold text-slate-400 uppercase tracking-tighter">
-                    Error: {result.bestPair.deviation.toFixed(2)}% • Safe to build
+                    Error: {result.bestPair.deviation.toFixed(2)}%
                   </p>
+                </div>
+
+                <div className="bg-green-100 text-green-700 p-4 rounded-xl flex items-center justify-center gap-3 border border-green-200 shadow-sm">
+                  <div className="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center">
+                    <i className="fas fa-check text-sm"></i>
+                  </div>
+                  <span className="text-lg font-black tracking-tight">Safe to build</span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
