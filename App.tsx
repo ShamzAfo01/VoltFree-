@@ -51,6 +51,55 @@ const Odometer = ({ value }: { value: string }) => {
   );
 };
 
+const TextReveal = ({ text, delay = 0, className = "" }: { text: string; delay?: number; className?: string }) => {
+  const letters = Array.from(text);
+
+  const container = {
+    hidden: { opacity: 0 },
+    visible: (i: number = 1) => ({
+      opacity: 1,
+      transition: { staggerChildren: 0.12, delayChildren: 0.04 * i + delay }
+    })
+  };
+
+  const child = {
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        damping: 12,
+        stiffness: 100
+      }
+    },
+    hidden: {
+      opacity: 0,
+      y: 20,
+      transition: {
+        type: "spring",
+        damping: 12,
+        stiffness: 100
+      }
+    }
+  };
+
+  return (
+    <motion.div
+      style={{ overflow: "hidden", display: "flex" }}
+      variants={container}
+      initial="hidden"
+      animate="visible"
+      className={className}
+    >
+      {letters.map((letter, index) => (
+        <motion.span variants={child} key={index}>
+          {letter === " " ? "\u00A0" : letter}
+        </motion.span>
+      ))}
+    </motion.div>
+  );
+};
+
 /**
  * Milestone Progress Indicator
  */
@@ -223,22 +272,43 @@ const App: React.FC = () => {
             initial="initial" animate="animate" exit="exit" variants={variants} transition={transition}
             className="flex-1 flex flex-col justify-center items-center px-10 text-center"
           >
-            <div className="mb-10 w-20 h-20 bg-slate-50 rounded-2xl flex items-center justify-center text-[#0038df] smooth-shadow">
-              <Logo className="w-10 h-10" />
+            <div className="mb-10 w-24 h-24 bg-slate-50 rounded-2xl flex items-center justify-center text-[#0038df] smooth-shadow">
+              <Logo className="w-12 h-12" delay={0.5} />
             </div>
-            <h1 className="text-5xl font-black tracking-tighter text-[#474747] mb-6">Free.</h1>
-            <p className="text-[#474747] text-lg font-bold opacity-50 mb-2 px-4 leading-relaxed">
+
+            <div className="mb-6 flex flex-col items-center">
+              <TextReveal
+                text="Volt Free"
+                className="text-6xl font-black tracking-tighter text-[#474747] font-['Dancing_Script']"
+                delay={2.5}
+              />
+            </div>
+
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 0.5, y: 0 }}
+              transition={{ delay: 3.5, duration: 0.8 }}
+              className="text-[#474747] text-lg font-bold mb-2 px-4 leading-relaxed"
+            >
               Design clean circuits with real-world resistors.
-            </p>
-            <p className="text-[#474747] text-sm font-medium opacity-40 mb-12 px-8 leading-relaxed max-w-[260px] mx-auto">
+            </motion.p>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.4 }}
+              transition={{ delay: 3.8, duration: 0.8 }}
+              className="text-[#474747] text-sm font-medium mb-12 px-8 leading-relaxed max-w-[260px] mx-auto"
+            >
               Enter your source and target voltages to find the perfect resistor pair for your project.
-            </p>
-            <button
+            </motion.p>
+            <motion.button
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 4.2, duration: 0.5 }}
               onClick={() => setStep('vin')}
               className="primary-btn w-full py-5 font-black text-lg smooth-shadow"
             >
               Get Started
-            </button>
+            </motion.button>
           </motion.div>
         )}
 
