@@ -292,14 +292,7 @@ const App: React.FC = () => {
             >
               Design clean circuits with real-world resistors.
             </motion.p>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.4 }}
-              transition={{ delay: 3.8, duration: 0.8 }}
-              className="text-[#474747] text-sm font-medium mb-12 px-8 leading-relaxed max-w-[260px] mx-auto"
-            >
-              Enter your source and target voltages to find the perfect resistor pair for your project.
-            </motion.p>
+
             <motion.button
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
