@@ -99,17 +99,62 @@ const SleekScroller = ({
   min?: number,
   max?: number
 }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   const val = parseFloat(value) || 0;
-  const percentage = ((val - min) / (max - min)) * 100;
+  const percentage = Math.min(100, Math.max(0, ((val - min) / (max - min)) * 100));
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
+
+  const handleManualInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // allow typing anything, validate/clamp on blur if needed, or just pass sticky value
+    onChange(e.target.value);
+  };
+
+  const handleBlur = () => {
+    setIsEditing(false);
+    // Optional: clamp value on blur
+    let num = parseFloat(value);
+    if (isNaN(num)) num = min;
+    if (num < min) num = min;
+    if (num > max) num = max;
+    onChange(num.toString());
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleBlur();
+    }
+  };
 
   return (
     <div className="relative pt-20 pb-12 w-full group">
-      {/* Tooltip with Odometer */}
+      {/* Tooltip with Odometer or Input */}
       <motion.div
-        style={{ left: `${percentage}%` }}
-        className="absolute top-0 -translate-x-1/2 bg-[#0038df] text-white px-4 py-2 rounded-[8px] font-black text-xl smooth-shadow flex items-center gap-1 after:content-[''] after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-8 after:border-transparent after:border-t-[#0038df]"
+        animate={{ left: `${percentage}%` }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="absolute top-0 -translate-x-1/2 bg-[#0038df] text-white px-4 py-2 rounded-[8px] font-black text-xl smooth-shadow flex items-center gap-1 after:content-[''] after:absolute after:top-full after:left-1/2 after:-translate-x-1/2 after:border-8 after:border-transparent after:border-t-[#0038df] cursor-text"
+        onClick={() => setIsEditing(true)}
       >
-        <Odometer value={val.toFixed(1)} />
+        {isEditing ? (
+          <input
+            ref={inputRef}
+            type="number"
+            value={value}
+            onChange={handleManualInput}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            className="w-[80px] bg-transparent text-white outline-none text-center no-spinner placeholder-white/50"
+            style={{ fontWeight: 900 }}
+          />
+        ) : (
+          <Odometer value={val.toFixed(1)} />
+        )}
         <span className="text-xs opacity-50 font-bold ml-1">V</span>
       </motion.div>
 
@@ -118,9 +163,9 @@ const SleekScroller = ({
         min={min}
         max={max}
         step="0.1"
-        value={value}
+        value={val}
         onChange={(e) => onChange(e.target.value)}
-        className="relative z-10"
+        className="relative z-10 w-full"
       />
 
       <div className="flex justify-between mt-4 text-[10px] font-black text-slate-300 uppercase tracking-widest">
@@ -182,8 +227,11 @@ const App: React.FC = () => {
               <Logo className="w-10 h-10" />
             </div>
             <h1 className="text-5xl font-black tracking-tighter text-[#474747] mb-6">Free.</h1>
-            <p className="text-[#474747] text-lg font-medium opacity-50 mb-12 px-4 leading-relaxed">
+            <p className="text-[#474747] text-lg font-bold opacity-50 mb-2 px-4 leading-relaxed">
               Design clean circuits with real-world resistors.
+            </p>
+            <p className="text-[#474747] text-sm font-medium opacity-40 mb-12 px-8 leading-relaxed max-w-[260px] mx-auto">
+              Enter your source and target voltages to find the perfect resistor pair for your project.
             </p>
             <button
               onClick={() => setStep('vin')}
@@ -201,7 +249,7 @@ const App: React.FC = () => {
             className="flex-1 flex flex-col pt-32 px-10"
           >
             <h2 className="text-4xl font-black text-[#474747] mb-4 tracking-tighter leading-none">Source.</h2>
-            <p className="text-sm font-semibold text-slate-400 mb-12">Slide to set your input voltage.</p>
+            <p className="text-sm font-semibold text-slate-400 mb-12">Scroll to select your Source Voltage.</p>
 
             <SleekScroller value={vin} onChange={setVin} max={48} />
 
@@ -229,7 +277,7 @@ const App: React.FC = () => {
             className="flex-1 flex flex-col pt-32 px-10"
           >
             <h2 className="text-4xl font-black text-[#474747] mb-4 tracking-tighter leading-none">Output.</h2>
-            <p className="text-sm font-semibold text-slate-400 mb-12">Select your target voltage.</p>
+            <p className="text-sm font-semibold text-slate-400 mb-12">Scroll to select your Target Voltage.</p>
 
             <SleekScroller value={targetVout} onChange={setTargetVout} max={parseFloat(vin)} />
 
